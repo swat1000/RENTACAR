@@ -15,7 +15,7 @@
     <title>Login Form</title>
 </head>
 <style>
-    form{
+    form {
         top: 70%;
     }
 </style>
@@ -29,6 +29,9 @@
     <section>
         <form action="/register" method="POST">
             <h3>Register Here</h3>
+            {{#if message}}
+            <p>{{message}}</p>
+            {{/if}}
 
             <label for="name">Name</label>
             <input type="text" placeholder="Name" id="name" name="name">
@@ -44,9 +47,9 @@
 
             <button type="submit">Register</button>
             <div class="social">
-          <div class="go"><i class="fab fa-google"></i>  Google</div>
-          <div class="fb"><i class="fab fa-facebook"></i>  Facebook</div>
-        </div>
+                <div class="go"><i class="fab fa-google"></i> Google</div>
+                <div class="fb"><i class="fab fa-facebook"></i> Facebook</div>
+            </div>
         </form>
     </section>
 </body>

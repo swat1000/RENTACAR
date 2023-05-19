@@ -15,25 +15,34 @@ exports.postRegister = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = new UserModel({
+    const userExists = await UserModel.findOne({ email });
+    if (userExists) {
+      res.render("register", { message: "User already registered. Please login." });
+      return;
+    }
+
+    let user = {
       name: name,
       email: email,
       password: hashedPassword,
       user_type: user_type,
-    });
+    };
 
-    const registered = await user.save();
+    const token = await UserModel(user).generateAuthToken();
+
+    const registered = await UserModel(user).save();
     if (!registered) {
       res.render("register", { message: "Registration failed. Please try again." });
       return;
     }
 
-    res.sendFile(path.join(__dirname, './login.html'));
-
+    res.render("login");
   } catch (error) {
-    res.status(401).send(error);
+    res.status(400).send(error);
+    console.log(error)
   }
 };
+
 
 exports.getLoginPage = (req, res) => {
   res.render("login");
@@ -50,6 +59,10 @@ exports.postLogin = async (req, res) => {
     }
 
     const isPasswordMatch = await bcrypt.compare(password, user.password);
+
+    const token = await UserModel(user).generateAuthToken();
+    console.log(token)
+
 
     if (isPasswordMatch) {
       res.redirect("/");

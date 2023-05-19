@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const jwt = require("jsonwebtoken")
 
 const Schema = mongoose.Schema;
 
@@ -9,8 +10,7 @@ const UserSchema = new Schema({
     },
     email: {
         type: String,
-        required: true,
-        unique:true
+        required: true
     },
     password: {
         type: String,
@@ -19,8 +19,25 @@ const UserSchema = new Schema({
     user_type: {
         type: String,
         required: true
-    }
+    },
+    tokens:[{
+        token:{
+            type:String,
+            required: true
+        }
+    }]
 });
+
+UserSchema.methods.generateAuthToken = async function() {
+    try {
+        const token = jwt.sign({_id:this._id.toString()}, "mynameisswatantrachaurasiyadeveloper");
+        this.tokens = this.tokens.concat({token:token})
+        await this.save();
+        return token;
+    } catch (error) {
+        res.send(error)
+    }
+}
 
 //Create a collection and UserModel is your collection name 
 
